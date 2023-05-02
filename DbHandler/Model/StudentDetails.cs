@@ -22,9 +22,9 @@ namespace DbHandler.Model
         public string Password { get; set; }
         public string MobileNo { get; set; }
 
-        public string CourseDues { get; set; }
+      //  public string CourseDues { get; set; }
 
-        public string LibraryDues { get; set; }
+      //  public string LibraryDues { get; set; }
 
         public string IsGraduated { get; set; }
     }
