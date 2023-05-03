@@ -1,6 +1,6 @@
 ﻿using DbHandler.Model;
 using DbHandler.Repositories;
-using StudentPortal.Models;
+using FinancePortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
@@ -18,13 +18,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using static StudentPortal.DTO.DTOS;
-using static StudentPortal.Responses.ResponseDTO;
+using static FinancePortal.DTO.DTO;
+using static FinancePortal.Responses.ResponseDTO;
 using System.IO;
 using System.Net;
-using StudentPortal.DTO;
+using FinancePortal.DTO;
 
-namespace StudentPortal.Helper
+namespace   FinancePortal.Helper
 {
     public class APIHelper : ControllerBase
     {
@@ -44,7 +44,7 @@ namespace StudentPortal.Helper
         {
             return new DateTime(((dt.Ticks + d.Ticks - 1) / d.Ticks) * d.Ticks);
         }
-        public async new Task<IActionResult> Response(string message, Level levelpara, object objcontent, ActiveErrorCode code, DateTime Startime, ILogRepository _logs, HttpContext contextobj, IConfiguration configuration, BaseClass baseclass, Object RequestParameter, string id, ReturnResponse responsecode, Exception ex, bool token)
+        public async new Task<IActionResult> Response(string message, Level levelpara, object objcontent, ActiveErrorCode code, DateTime Startime,  HttpContext contextobj, IConfiguration configuration, BaseClass baseclass, Object RequestParameter, string id, ReturnResponse responsecode, Exception ex, bool token)
         {
             var msg = message;
             if (ex != null)
@@ -136,95 +136,95 @@ namespace StudentPortal.Helper
 
             string requestResponse = JsonConvert.SerializeObject(res);
             string _request = JsonConvert.SerializeObject(RequestParameter);
-            Logs(_logs, levelpara, response.Code.ToString(), contextobj, configuration, ex, Startime, DateTime.Now, baseclass, _request, requestResponse, id);
+           // Logs( levelpara, response.Code.ToString(), contextobj, configuration, ex, Startime, DateTime.Now, baseclass, _request, requestResponse, id);
             return res;
         }
-        public static void Logs(ILogRepository _log, Level Level, string response, HttpContext contaxt, IConfiguration configuration, Exception ex, DateTime Starttime, DateTime Endtime, BaseClass baseClass, string RequestParameter, string RequestResponse, string userid)
-        {
-            try
-            {
-                var exception = JsonConvert.SerializeObject(ex);
-                //ex = null;
-                var routeInfo = contaxt.GetRouteData().Values;
-                string currentController = routeInfo["controller"].ToString();
-                string currentAction = routeInfo["action"].ToString();
-                var id = userid;
-                var clientIp = GetIP(contaxt);
-                string message = $"User Access this function with Id: {id}";
-                // level level = level.Info;
-                string except = exception;
-                string status = response;
-                //if (ex != null)
-                //{
-                //    except = ex.Message;
-                //    level = level.Error;
-                //}
-                if (response == "Success")
-                    message = $"User with id:{id} successfully Get Result";
-                if (response == "Failed")
-                    message = $"User with id:{id} was unsuccessful to Get Result";
+        //public static void Logs(Level Level, string response, HttpContext contaxt, IConfiguration configuration, Exception ex, DateTime Starttime, DateTime Endtime, BaseClass baseClass, string RequestParameter, string RequestResponse, string userid)
+        //{
+        //    try
+        //    {
+        //        var exception = JsonConvert.SerializeObject(ex);
+        //        //ex = null;
+        //        var routeInfo = contaxt.GetRouteData().Values;
+        //        string currentController = routeInfo["controller"].ToString();
+        //        string currentAction = routeInfo["action"].ToString();
+        //        var id = userid;
+        //        var clientIp = GetIP(contaxt);
+        //        string message = $"User Access this function with Id: {id}";
+        //        // level level = level.Info;
+        //        string except = exception;
+        //        string status = response;
+        //        //if (ex != null)
+        //        //{
+        //        //    except = ex.Message;
+        //        //    level = level.Error;
+        //        //}
+        //        if (response == "Success")
+        //            message = $"User with id:{id} successfully Get Result";
+        //        if (response == "Failed")
+        //            message = $"User with id:{id} was unsuccessful to Get Result";
 
 
-                if (Level == Level.Error && Convert.ToBoolean(configuration["ErrorLog"]) == true || Level == Level.Success && Convert.ToBoolean(configuration["SuccessLog"]) == true)
-                {
-                    WriteLogs(_log, configuration, message, Level, id, clientIp, currentAction, exception, currentController, status, Starttime, Endtime, baseClass, RequestParameter, RequestResponse);
-                }
-                else
-                {
-                    if (Convert.ToBoolean(configuration["InfoLog"]) == true)
-                    {
-                        message = $"User with id:{id} Access Function:{currentAction} and Controller:{currentController}";
+        //        if (Level == Level.Error && Convert.ToBoolean(configuration["ErrorLog"]) == true || Level == Level.Success && Convert.ToBoolean(configuration["SuccessLog"]) == true)
+        //        {
+        //            WriteLogs( configuration, message, Level, id, clientIp, currentAction, exception, currentController, status, Starttime, Endtime, baseClass, RequestParameter, RequestResponse);
+        //        }
+        //        else
+        //        {
+        //            if (Convert.ToBoolean(configuration["InfoLog"]) == true)
+        //            {
+        //                message = $"User with id:{id} Access Function:{currentAction} and Controller:{currentController}";
 
-                        //except = null;
-                        WriteLogs(_log, configuration, message, Level, id, clientIp, currentAction, exception, currentController, status, Starttime, Endtime, baseClass, RequestParameter, RequestResponse);
-                    }
+        //                //except = null;
+        //                WriteLogs( configuration, message, Level, id, clientIp, currentAction, exception, currentController, status, Starttime, Endtime, baseClass, RequestParameter, RequestResponse);
+        //            }
 
-                }
-            }
-            catch (Exception ex12)
-            {
+        //        }
+        //    }
+        //    catch (Exception ex12)
+        //    {
 
-            }
-        }
+        //    }
+        //}
         public static string GetIP(HttpContext contaxt)
         {
             return contaxt.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
         }
-        public static void WriteLogs(ILogRepository _log, IConfiguration configuration, string message, Level Level, string userid, string ip, string function, string Exception, string ControllerName, string status, DateTime Starttime, DateTime Endtime, BaseClass baseClass, string RequestParameter, string RequestResponse)
-        {
-            try
-            {
-                configuration = null;
-                Log model = new Log();
-                model.ID = Guid.NewGuid().ToString();
+        //public static void WriteLogs( IConfiguration configuration, string message, Level Level, string userid, string ip, string function, string Exception, string ControllerName, string status, DateTime Starttime, DateTime Endtime, BaseClass baseClass, string RequestParameter, string RequestResponse)
+        //{
+        //    try
+        //    {
+        //        configuration = null;
+        //        Log model = new Log();
+        //        model.ID = Guid.NewGuid().ToString();
                
-                model.FunctionName = function;
-                model.ControllerName = ControllerName;
-                model.DeviceID = baseClass == null ? "" : baseClass.DeviceID;
-                model.Browser = baseClass == null ? "" : baseClass.Browser;
-                model.IP = ip;
-                model.StartTime = Starttime;
-                model.EndTime = Endtime;
-                model.Exception = Exception;
-                model.Message = message;
-                model.Level = Level.ToString();
-                model.Status = status;
-                model.UserID = userid;
-                model.RequestParameters = RequestParameter;
-                model.RequestResponse =  RequestResponse;
+        //        model.FunctionName = function;
+        //        model.ControllerName = ControllerName;
+        //        model.DeviceID = baseClass == null ? "" : baseClass.DeviceID;
+        //        model.Browser = baseClass == null ? "" : baseClass.Browser;
+        //        model.IP = ip;
+        //        model.StartTime = Starttime;
+        //        model.EndTime = Endtime;
+        //        model.Exception = Exception;
+        //        model.Message = message;
+        //        model.Level = Level.ToString();
+        //        model.Status = status;
+        //        model.UserID = userid;
+        //        model.RequestParameters = RequestParameter;
+        //        model.RequestResponse =  RequestResponse;
             
-                //change this when log updates
-                _log.Add(model);
-                _log.Save();
+        //        //change this when log updates
+        //        _log.Add(model);
+        //        _log.Save();
 
 
-            }
-            catch (Exception ex)
-            {
+        //    }
+        //    catch (Exception ex)
+        //    {
 
-            }
+        //    }
 
-        }
+        //}
         public List<string> GetErrors(ModelStateDictionary modelState)
         {
             return modelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();

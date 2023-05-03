@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-namespace StudentPortal.Responses
+namespace FinancePortal.Responses
 {
     public class ResponseDTO
     {
