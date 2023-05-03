@@ -16,6 +16,8 @@ namespace DbHandler.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Admin> TAdmin { get; set; }
         public DbSet<StudentDetails> TStudent { get; set; }
+        public DbSet<CourseDues> TCourseDue { get; set; }
+        public DbSet<LibraryDues> TLibraryDue { get; set; }
     }
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {
