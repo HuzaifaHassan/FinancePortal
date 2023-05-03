@@ -25,11 +25,59 @@ using FinancePortal.Models;
 using FinancePortal.DTO;
 using FinancePortal.Helper;
 using System.Transactions;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using static System.Reflection.Metadata.BlobBuilder;
+
 namespace FinancePortal.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
 
     public class Auth : ControllerBase
     {
-      
+        private readonly ApplicationDbContext _ctx;
+        private readonly IStudentRepository _studentRep;
+        private readonly ICourseDueRepository _courserep;
+        private readonly ILibraryDueRepository _libg;
+        private readonly IAdminRepository _admin;
+        private readonly IConfiguration _config;
+        private readonly APIHelper _helper;
+        private readonly UserManager<ApplicationUser> _userManager;
+        public Auth(ApplicationDbContext ctx, IStudentRepository studentRep, ICourseDueRepository courserep, ILibraryDueRepository libg, IAdminRepository admin, IConfiguration config, APIHelper helper,UserManager<ApplicationUser> usermanager)
+        {
+            _ctx = ctx;
+            _studentRep = studentRep;
+            _courserep = courserep;
+            _libg = libg;
+            _admin = admin;
+            _config = config;
+            _userManager = usermanager;
+            _helper = new APIHelper(studentRep, usermanager, config);
+        }
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO DTO)
+        {
+            DateTime _startTime = DateTime.Now;
+            try
+            {
+                var user = _admin.GetByNameandPassword(DTO.name, DTO.password);
+                if (user == null || user.password != DTO.password)
+                {
+                    return await _helper.Response("err-001", Level.Error, "Invalid email or password", ActiveErrorCode.Failed, _startTime,  HttpContext, _config, DTO.BaseClass, DTO, "", ReturnResponse.Unauthorized, null, false);
+                }
+                return await _helper.Response("suc-001", Level.Success, user.name, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, DTO, user.name, ReturnResponse.Success, null, true);
+
+            }
+            catch (Exception ex)
+            {
+                return await _helper.Response("err-001", Level.Error, ex.Message, ActiveErrorCode.Failed, _startTime, _logs, HttpContext, _configuration, DTO.BaseClass, DTO, "", ReturnResponse.BadRequest, ex, false);
+            }
+
+
+
+
+
+        }
     }
 }
