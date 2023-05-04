@@ -13,8 +13,10 @@ namespace DbHandler.Repositories
         public void AddCourseDue(CourseDues model);
         public CourseDues GetCourseDueById(string id);
         public CourseDues GetCourseDueByRef(string Ref);
+
+        public CourseDues GetCourseDueBycstid(string cstid);
         public void UpdateCourseDue(CourseDues model);
         public bool Save();
-
+      //  void AddCourseDue(global::FinancePortal.DTO.AddCourseDue addCourse);
     }
 }

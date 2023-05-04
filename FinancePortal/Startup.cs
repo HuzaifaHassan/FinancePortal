@@ -87,6 +87,7 @@ namespace FinancePortal
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<ICourseDueRepository, CourseRepository>();
             services.AddScoped<ILibraryDueRepository, LibraryDueRepository>();
+            services.AddScoped<IAddStudentRepository, AddStudentRepository>();
             services.AddScoped<APIHelper>();
             #endregion
             services.AddHttpClient();

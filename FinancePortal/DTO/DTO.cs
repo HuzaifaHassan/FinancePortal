@@ -62,4 +62,40 @@ namespace FinancePortal.DTO
 
         public BaseClass BaseClass { get; set; }
     }
+    public class GetStudents
+    {
+       public string StudentID { get; set; }
+        public BaseClass BaseClass { get; set; }
+    }
+    public class AddStudentDTO
+    {
+        public string Id { get; set; }
+        public string stId { get; set; }
+        public string cstID { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public bool IsActive { get; set; }
+
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string MobileNo { get; set; }
+
+        //  public string CourseDues { get; set; }
+
+        //  public string LibraryDues { get; set; }
+
+         public string IsGraduated { get; set; }
+
+        public BaseClass BaseClass { get; set; }
+    }
+    public class AddCourseDue
+    {
+        public string id { get; set; }
+        public string cstid { get; set; }
+        public string CourseDue { get; set; }
+        public string Reference { get; set; }
+        public bool IsPaid { get; set; }
+        public BaseClass BaseClass { get; set; }
+    }
 }

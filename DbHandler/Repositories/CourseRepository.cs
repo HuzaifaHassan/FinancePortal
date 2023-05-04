@@ -27,7 +27,10 @@ namespace DbHandler.Repositories
             return _ctx.TCourseDue.Where(x => x.Reference == Ref).FirstOrDefault();
         
         }
-
+        public CourseDues GetCourseDueBycstid(string cstid)
+        {
+            return _ctx.TCourseDue.Where(x => x.cstid == cstid).FirstOrDefault();
+        }
         public void UpdateCourseDue(CourseDues model)
         {
             _ctx.TCourseDue.Update(model);

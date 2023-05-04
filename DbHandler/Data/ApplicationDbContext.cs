@@ -18,6 +18,7 @@ namespace DbHandler.Data
         public DbSet<StudentDetails> TStudent { get; set; }
         public DbSet<CourseDues> TCourseDue { get; set; }
         public DbSet<LibraryDues> TLibraryDue { get; set; }
+        public DbSet<AddStudent> TAddStudent { get; set; }
     }
     public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
     {

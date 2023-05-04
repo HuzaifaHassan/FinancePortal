@@ -23,9 +23,13 @@ namespace DbHandler.Repositories
         }
         public StudentDetails GetByStudentId(string StudentId)
         {
-            return _ctx.TStudent.Where(x => x.Id == StudentId).FirstOrDefault();
+            return _ctx.TStudent.Where(x => x.stId == StudentId).FirstOrDefault();
 
 
+        }
+        public List<StudentDetails> GetStudent()
+        {
+            return _ctx.TStudent.Where(x => x.IsActive == true).ToList();
         }
         public StudentDetails GetByStudentandCstudentId(string studentid, string cstudentid)
         {

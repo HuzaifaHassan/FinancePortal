@@ -13,6 +13,7 @@ namespace DbHandler.Repositories
         public void AddStudentDets(StudentDetails Model);
         public StudentDetails GetByStudentId(string StudentId);
         public StudentDetails GetByStudentandCstudentId(string studentid, string cstudentid);
+        public List<StudentDetails> GetStudent();
         public void UpdateStudentDet(StudentDetails model);
         public bool Save();
 
