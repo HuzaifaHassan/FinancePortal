@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using DbHandler.Data;
 using DbHandler.Model;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 using System.Configuration;
 
 using Microsoft.IdentityModel.Tokens;
@@ -27,6 +27,7 @@ using System.Reflection;
 using Microsoft.OpenApi.Models;
 using DbHandler.Repositories;
 using Microsoft.Data.SqlClient;
+using FinancePortal.Helper;
 
 namespace FinancePortal
 {
@@ -36,10 +37,13 @@ namespace FinancePortal
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+
         }
-        public void ConfigurationServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            var connection = "Data Source=HUZAIFAHASSAN\\SQLEXPRESS;Initial Catalog=FinanceDB;Integrated Security=True";
+            //  var connection = "";
+            var connection = "Data Source=HUZAIFAHASSAN\\SQLEXPRESS;Initial Catalog=FinanceDB;Integrated Security=True;TrustServerCertificate=True";
             var conn = new SqlConnection(connection);
             services.AddDbContextPool<ApplicationDbContext>(options =>
             {
@@ -48,21 +52,21 @@ namespace FinancePortal
                 {
                     sqlServerOptionsAction.CommandTimeout(3600);
                 });
-            
             });
+
             services.AddDbContext<ApplicationDbContext>(op =>
             {
                 op.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                 sqlServerOptions => sqlServerOptions.CommandTimeout(3600));
-            
+
+                sqlServerOptions => sqlServerOptions.CommandTimeout(3600));
             });
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = false;
 
             })
-       .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+             .AddDefaultTokenProviders();
 
             #region Cors
             services.AddCors(options =>
@@ -83,6 +87,7 @@ namespace FinancePortal
             services.AddScoped<IAdminRepository, AdminRepository>();
             services.AddScoped<ICourseDueRepository, CourseRepository>();
             services.AddScoped<ILibraryDueRepository, LibraryDueRepository>();
+            services.AddScoped<APIHelper>();
             #endregion
             services.AddHttpClient();
             services.AddSwaggerGen(options =>
@@ -96,6 +101,7 @@ namespace FinancePortal
                 });
 
             });
+
             services.Configure<IISServerOptions>(options =>
             {
                 options.AllowSynchronousIO = true;
@@ -140,5 +146,5 @@ namespace FinancePortal
         }
 
     }
-    
+
 }

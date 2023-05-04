@@ -71,7 +71,7 @@ namespace FinancePortal.Controllers
             }
             catch (Exception ex)
             {
-                return await _helper.Response("err-001", Level.Error, ex.Message, ActiveErrorCode.Failed, _startTime, _logs, HttpContext, _configuration, DTO.BaseClass, DTO, "", ReturnResponse.BadRequest, ex, false);
+                return await _helper.Response("err-001", Level.Error, ex.Message, ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, DTO, "", ReturnResponse.BadRequest, ex, false);
             }
 
 
@@ -79,5 +79,61 @@ namespace FinancePortal.Controllers
 
 
         }
+        [HttpPost]
+        [Route("Register")]
+        [ProducesResponseType(typeof(ActiveResponse<RegistraiontObject>), 200)]
+
+        public async Task<IActionResult> AddStudent([FromBody] StudentDTO DTO)
+        {
+            DateTime _startTime = DateTime.Now;
+            var name = "";
+            bool exist = false;
+            var id = "";
+            try 
+            {
+                var jso = JsonConvert.SerializeObject(DTO);
+
+                var forLog = JsonConvert.DeserializeObject<StudentDTO>(jso);
+                if (!TryValidateModel(DTO))
+                {
+                    //if (!ModelState.IsValid)
+                    //{
+                    return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime,  HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
+
+                }
+                var addStudent = new StudentDetails
+                {
+                    Id=DTO.Id,
+                    stId=DTO.stId,
+                    cstID=DTO.cstID,
+                    CreatedOn=DTO.CreatedOn,
+                    IsActive=DTO.IsActive,
+                    Name=DTO.Name,
+                    LastName=DTO.LastName,
+                    Email=DTO.Email,
+                    Password=DTO.Password,
+                    MobileNo=DTO.MobileNo,
+                   // IsGraduated="No"
+                };
+                _studentRep.AddStudentDets(addStudent);
+                _studentRep.Save();
+                return await _helper.Response("suc-001", Level.Success, addStudent, ActiveErrorCode.Success, _startTime,  HttpContext, _config, DTO.BaseClass, forLog, id, ReturnResponse.Success, null, true);
+
+            }
+            catch (Exception ex)
+            {
+
+                var jso = JsonConvert.SerializeObject(DTO);
+
+                var forLog = JsonConvert.DeserializeObject<StudentDTO>(jso);
+
+                return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime,  HttpContext, null, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, ex, false);
+
+            }
+
+
+
+        }
+
     }
 }
