@@ -247,20 +247,46 @@ namespace FinancePortal.Controllers
 
                 }
                 cstid = DTO.cstid;
-                var Reff = Guid.NewGuid().ToString();
-                _ref = "#" + Reff;
-                var addCourse = new CourseDues
+                //var Reff = Guid.NewGuid().ToString();
+                //_ref = "#" + Reff;
+                if (DTO.IsPaid = false)
                 {
-                  id=DTO.id,
-                  cstid=cstid,
-                  CourseDue=DTO.CourseDue,
-                  Reference=_ref,
-                  IsPaid=DTO.IsPaid
-                };
-             
+                    var addCourse = new CourseDues
+                    {
+                        id = DTO.id,
+                        cstid = cstid,
+                        CourseDue = DTO.CourseDue,
+                        Reference = DTO.Reference,
+                        IsPaid = DTO.IsPaid
+                    };
 
-                _courserep.AddCourseDue(addCourse);
-                _courserep.Save();
+
+                    _courserep.AddCourseDue(addCourse);
+                    _courserep.Save();
+                }
+                else if (DTO.IsPaid = true)
+                {
+                    var addCourse = new CourseDues
+                    {
+                        id = DTO.id,
+                        cstid = cstid,
+                        CourseDue = DTO.CourseDue,
+                        Reference = DTO.Reference,
+                        IsPaid = DTO.IsPaid
+                    };
+                    var addStudentt = new AddStudent
+                    {
+                       
+                        IsGraduated = "Yes"
+                    };
+                    _addStudentRep.UpdateStudentDet(addStudentt);
+                    _addStudentRep.Save();
+
+                    _courserep.UpdateCourseDue(addCourse);
+                    _courserep.Save();
+
+
+                }
                 return await _helper.Response("suc-001", Level.Success, _ref, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog,cstid , ReturnResponse.Success, null, true);
 
             }
@@ -279,9 +305,9 @@ namespace FinancePortal.Controllers
 
         }
         [HttpPost]
-        [Route("GetReference")]
+        [Route("PayCourseDues")]
         [ProducesResponseType(typeof(ActiveResponse<CourseDues>), 200)]
-        public async Task<IActionResult> GetCourseFeesReference([FromBody] AddCourseDue DTO)
+        public async Task<IActionResult> PayCourseFees([FromBody] AddCourseDue DTO)
         {
 
             DateTime _startTime = DateTime.Now;
@@ -289,6 +315,7 @@ namespace FinancePortal.Controllers
             bool exist = false;
             var _ref = "";
             var id = "";
+            var cstid = "";
             try
             {
                 var jso = JsonConvert.SerializeObject(DTO);
@@ -301,24 +328,23 @@ namespace FinancePortal.Controllers
                     return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
 
                 }
-                var getReference = _courserep.GetCourseDueBycstid(DTO.cstid);
-                var sendRef = new CourseDues
+                cstid = DTO.cstid;
+                //var Reff = Guid.NewGuid().ToString();
+                //_ref = "#" + Reff;
+                var course= _courserep.GetCourseDueBycstid(cstid);
+                var addCourse = new CourseDues
                 {
-                    Reference = _ref
-
+                    id = DTO.id,
+                    cstid = cstid,
+                    CourseDue = DTO.CourseDue,
+                    Reference = DTO.Reference,
+                    IsPaid = DTO.IsPaid
                 };
-                //// Send request to finance portal
-                var client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:7120/"); // replace with the correct base URL of the finance portal
-                var requestUri = "api/Course/GettReference";
-                var requestBody = new StringContent(JsonConvert.SerializeObject(sendRef), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(requestUri, requestBody);
 
-                // Check response status
-                var content = await response.Content.ReadAsStringAsync();
-                var financeResponse = JsonConvert.DeserializeObject<ActiveResponse<AddCourseDue>>(content);
 
-                return await _helper.Response("suc-001", Level.Success, getReference, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, _ref, ReturnResponse.Success, null, true);
+                _courserep.AddCourseDue(addCourse);
+                _courserep.Save();
+                return await _helper.Response("suc-001", Level.Success, _ref, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, cstid, ReturnResponse.Success, null, true);
 
             }
             catch (Exception ex)
@@ -335,5 +361,62 @@ namespace FinancePortal.Controllers
 
 
         }
+        //[HttpPost]
+        //[Route("GetReference")]
+        //[ProducesResponseType(typeof(ActiveResponse<CourseDues>), 200)]
+        //public async Task<IActionResult> GetCourseFeesReference([FromBody] AddCourseDue DTO)
+        //{
+
+        //    DateTime _startTime = DateTime.Now;
+        //    var name = "";
+        //    bool exist = false;
+        //    var _ref = "";
+        //    var id = "";
+        //    try
+        //    {
+        //        var jso = JsonConvert.SerializeObject(DTO);
+
+        //        var forLog = JsonConvert.DeserializeObject<AddCourseDue>(jso);
+        //        if (!TryValidateModel(DTO))
+        //        {
+        //            //if (!ModelState.IsValid)
+        //            //{
+        //            return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
+
+        //        }
+        //        var getReference = _courserep.GetCourseDueBycstid(DTO.cstid);
+        //        var sendRef = new CourseDues
+        //        {
+        //            Reference = _ref
+
+        //        };
+        //        //// Send request to finance portal
+        //        var client = new HttpClient();
+        //        client.BaseAddress = new Uri("https://localhost:7120/"); // replace with the correct base URL of the finance portal
+        //        var requestUri = "api/Course/GettReference";
+        //        var requestBody = new StringContent(JsonConvert.SerializeObject(sendRef), Encoding.UTF8, "application/json");
+        //        var response = await client.PostAsync(requestUri, requestBody);
+
+        //        // Check response status
+        //        var content = await response.Content.ReadAsStringAsync();
+        //        var financeResponse = JsonConvert.DeserializeObject<ActiveResponse<AddCourseDue>>(content);
+
+        //        return await _helper.Response("suc-001", Level.Success, getReference, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, _ref, ReturnResponse.Success, null, true);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //        var jso = JsonConvert.SerializeObject(DTO);
+
+        //        var forLog = JsonConvert.DeserializeObject<StudentDTO>(jso);
+
+        //        return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime, HttpContext, null, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, ex, false);
+
+        //    }
+
+
+
+        //}
     }
 }
