@@ -27,6 +27,12 @@ namespace DbHandler.Repositories
 
 
         }
+        public StudentDetails GetByStudentCId(string CId)
+        {
+            return _ctx.TStudent.Where(x => x.cstID == CId).FirstOrDefault();
+
+
+        }
         public List<StudentDetails> GetStudent()
         {
             return _ctx.TStudent.Where(x => x.IsActive == true).ToList();

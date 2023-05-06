@@ -117,6 +117,15 @@ namespace FinancePortal.Controllers
                     MobileNo=DTO.MobileNo,
                     IsGraduated="No"
                 };
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:7236/"); 
+                var requestUri = "api/AuthController/Register";
+                var requestBody = new StringContent(JsonConvert.SerializeObject(addStudent), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(requestUri, requestBody);
+
+                // Check response status
+                var content = await response.Content.ReadAsStringAsync();
+                var financeResponse = JsonConvert.DeserializeObject<ActiveResponse<StudentDetails>>(content);
                 _studentRep.AddStudentDets(addStudent);
                 _studentRep.Save();
                 return await _helper.Response("suc-001", Level.Success, addStudent, ActiveErrorCode.Success, _startTime,  HttpContext, _config, DTO.BaseClass, forLog, id, ReturnResponse.Success, null, true);
@@ -249,44 +258,26 @@ namespace FinancePortal.Controllers
                 cstid = DTO.cstid;
                 //var Reff = Guid.NewGuid().ToString();
                 //_ref = "#" + Reff;
-                if (DTO.IsPaid = false)
-                {
+              
                     var addCourse = new CourseDues
                     {
                         id = DTO.id,
                         cstid = cstid,
                         CourseDue = DTO.CourseDue,
                         Reference = DTO.Reference,
-                        IsPaid = DTO.IsPaid
+                        IsPaid = true
                     };
 
 
                     _courserep.AddCourseDue(addCourse);
                     _courserep.Save();
-                }
-                else if (DTO.IsPaid = true)
-                {
-                    var addCourse = new CourseDues
-                    {
-                        id = DTO.id,
-                        cstid = cstid,
-                        CourseDue = DTO.CourseDue,
-                        Reference = DTO.Reference,
-                        IsPaid = DTO.IsPaid
-                    };
-                    var addStudentt = new AddStudent
-                    {
-                       
-                        IsGraduated = "Yes"
-                    };
-                    _addStudentRep.UpdateStudentDet(addStudentt);
-                    _addStudentRep.Save();
-
-                    _courserep.UpdateCourseDue(addCourse);
-                    _courserep.Save();
+             
+              
+                  
+                    
 
 
-                }
+                
                 return await _helper.Response("suc-001", Level.Success, _ref, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog,cstid , ReturnResponse.Success, null, true);
 
             }
@@ -361,62 +352,155 @@ namespace FinancePortal.Controllers
 
 
         }
-        //[HttpPost]
-        //[Route("GetReference")]
-        //[ProducesResponseType(typeof(ActiveResponse<CourseDues>), 200)]
-        //public async Task<IActionResult> GetCourseFeesReference([FromBody] AddCourseDue DTO)
-        //{
+        [HttpPost]
+        [Route("GetLibraryDues")]
+        [ProducesResponseType(typeof(ActiveResponse<RegistraiontObject>), 200)]
 
-        //    DateTime _startTime = DateTime.Now;
-        //    var name = "";
-        //    bool exist = false;
-        //    var _ref = "";
-        //    var id = "";
-        //    try
-        //    {
-        //        var jso = JsonConvert.SerializeObject(DTO);
+        public async Task<IActionResult> GetLibraryDues([FromBody] LibraryDuesDTO DTO)
+        {
+            DateTime _startTime = DateTime.Now;
+            var name = "";
+            bool exist = false;
+            var id = "";
+            try
+            {
+                var jso = JsonConvert.SerializeObject(DTO);
 
-        //        var forLog = JsonConvert.DeserializeObject<AddCourseDue>(jso);
-        //        if (!TryValidateModel(DTO))
-        //        {
-        //            //if (!ModelState.IsValid)
-        //            //{
-        //            return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
+                var forLog = JsonConvert.DeserializeObject<LibraryDuesDTO>(jso);
+                if (!TryValidateModel(DTO))
+                {
+                    //if (!ModelState.IsValid)
+                    //{
+                    return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
 
-        //        }
-        //        var getReference = _courserep.GetCourseDueBycstid(DTO.cstid);
-        //        var sendRef = new CourseDues
-        //        {
-        //            Reference = _ref
+                }
+                var addLibraryDues = new LibraryDues
+                {
+                   id=DTO.id,
+                   cstid=DTO.cstid,
+                   Reference=DTO.Reference,
+                   LibraryDue=DTO.LibraryDue,
+                   IsCleared=DTO.IsCleared
+                };
 
-        //        };
-        //        //// Send request to finance portal
-        //        var client = new HttpClient();
-        //        client.BaseAddress = new Uri("https://localhost:7120/"); // replace with the correct base URL of the finance portal
-        //        var requestUri = "api/Course/GettReference";
-        //        var requestBody = new StringContent(JsonConvert.SerializeObject(sendRef), Encoding.UTF8, "application/json");
-        //        var response = await client.PostAsync(requestUri, requestBody);
+                _libg.AddLibraryDue(addLibraryDues);
+                _libg.Save();
+                return await _helper.Response("suc-001", Level.Success, addLibraryDues, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, id, ReturnResponse.Success, null, true);
 
-        //        // Check response status
-        //        var content = await response.Content.ReadAsStringAsync();
-        //        var financeResponse = JsonConvert.DeserializeObject<ActiveResponse<AddCourseDue>>(content);
+            }
+            catch (Exception ex)
+            {
 
-        //        return await _helper.Response("suc-001", Level.Success, getReference, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, _ref, ReturnResponse.Success, null, true);
+                var jso = JsonConvert.SerializeObject(DTO);
 
-        //    }
-        //    catch (Exception ex)
-        //    {
+                var forLog = JsonConvert.DeserializeObject<LibraryDuesDTO>(jso);
 
-        //        var jso = JsonConvert.SerializeObject(DTO);
+                return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime, HttpContext, null, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, ex, false);
 
-        //        var forLog = JsonConvert.DeserializeObject<StudentDTO>(jso);
-
-        //        return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime, HttpContext, null, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, ex, false);
-
-        //    }
+            }
 
 
 
-        //}
+        }
+        [HttpPost]
+        [Route("ClearLibraryDues")]
+        [ProducesResponseType(typeof(ActiveResponse<RegistraiontObject>), 200)]
+
+        public async Task<IActionResult> ClearLibraryDues([FromBody] LibraryDuesDTO DTO,string Cid,string _ref)
+        {
+            DateTime _startTime = DateTime.Now;
+            var name = "";
+            bool exist = false;
+            var id = "";
+            try
+            {
+                var jso = JsonConvert.SerializeObject(DTO);
+
+                var forLog = JsonConvert.DeserializeObject<LibraryDuesDTO>(jso);
+                if (!TryValidateModel(DTO))
+                {
+                    //if (!ModelState.IsValid)
+                    //{
+                    return await _helper.Response("err-Model", Level.Success, _helper.GetErrors(ModelState), ActiveErrorCode.Failed, _startTime, HttpContext, _config, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, null, false);    //}
+
+                }
+                var _getLibraryDues = _libg.GetByStudentIdAndRef(Cid,_ref);
+                var addLibraryDues = new LibraryDues
+                {
+                    
+                    IsCleared = DTO.IsCleared
+                };
+
+                _libg.UpdateLibraryDues(addLibraryDues);
+                _libg.Save();
+                return await _helper.Response("suc-001", Level.Success, addLibraryDues, ActiveErrorCode.Success, _startTime, HttpContext, _config, DTO.BaseClass, forLog, id, ReturnResponse.Success, null, true);
+
+            }
+            catch (Exception ex)
+            {
+
+                var jso = JsonConvert.SerializeObject(DTO);
+
+                var forLog = JsonConvert.DeserializeObject<LibraryDuesDTO>(jso);
+
+                return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime, HttpContext, null, DTO.BaseClass, forLog, "", ReturnResponse.BadRequest, ex, false);
+
+            }
+
+
+
+        }
+        [HttpPost]
+        [Route("GraduationEligibility")]
+        [ProducesResponseType(typeof(ActiveResponse<RegistraiontObject>), 200)]
+
+        public async Task<IActionResult> GraduationEligibility(string cid)
+        {
+            DateTime _startTime = DateTime.Now;
+            var name = "";
+            bool exist = false;
+            var id = "";
+            try
+            {
+
+                var _eligible = _studentRep.GetByStudentCId(cid);
+                var _course = _courserep.GetCourseDueBycstid(cid);
+                var _lib = _libg.GetByStudentcid(cid);
+                if (_course.IsPaid == true && _lib.IsCleared == true)
+                {
+                    var Grad = new StudentDetails
+                    {
+
+                        IsGraduated="Yes"
+                    };
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri("https://localhost:7120/");
+                    var requestUri = "api/Auth/Register";
+                    var requestBody = new StringContent(JsonConvert.SerializeObject(addStudent), Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(requestUri, requestBody);
+
+                    // Check response status
+                    var content = await response.Content.ReadAsStringAsync();
+                    var financeResponse = JsonConvert.DeserializeObject<ActiveResponse<StudentDetails>>(content);
+                    _studentRep.UpdateStudentDet(Grad);
+                    _studentRep.Save();
+
+                }
+               
+                return await _helper.Response("Graduated", Level.Success, _eligible, ActiveErrorCode.Success, _startTime, HttpContext, _config, null, null, id, ReturnResponse.Success, null, true);
+
+            }
+            catch (Exception ex)
+            {
+
+               
+
+                return await _helper.Response("ex-0001", Level.Error, null, ActiveErrorCode.Failed, _startTime, HttpContext, null, null, null, "", ReturnResponse.BadRequest, ex, false);
+
+            }
+
+
+
+        }
     }
 }

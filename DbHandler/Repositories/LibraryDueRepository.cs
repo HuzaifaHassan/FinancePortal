@@ -25,9 +25,14 @@ namespace DbHandler.Repositories
             var resp = _ctx.TLibraryDue.Where(x => x.id == id).FirstOrDefault();
             return resp;
         }
-        public LibraryDues GetByStudentIdAndRef(string id, string _ref)
+        public LibraryDues GetByStudentcid(string cid)
         {
-            return _ctx.TLibraryDue.Where(x => x.id == id && x.Reference == _ref).FirstOrDefault();
+            var resp = _ctx.TLibraryDue.Where(x => x.cstid == cid).FirstOrDefault();
+            return resp;
+        }
+        public LibraryDues GetByStudentIdAndRef(string cid, string _ref)
+        {
+            return _ctx.TLibraryDue.Where(x => x.cstid == cid && x.Reference == _ref).FirstOrDefault();
         }
         public void UpdateLibraryDues(LibraryDues model)
         {

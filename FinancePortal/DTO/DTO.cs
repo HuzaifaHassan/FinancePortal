@@ -16,10 +16,10 @@ namespace FinancePortal.DTO
     {
         public string IP { get; set; }
 
-        [Required(ErrorMessage = "dto-0001")]
+      //  [Required(ErrorMessage = "dto-0001")]
         public string DeviceID { get; set; }
 
-        [Required(ErrorMessage = "err-0002")]
+    //    [Required(ErrorMessage = "err-0002")]
         public string OnBoardingChannel { get; set; }
         public string Latitude { get; set; }
         public string Longitude { get; set; }
@@ -97,5 +97,17 @@ namespace FinancePortal.DTO
         public string Reference { get; set; }
         public bool IsPaid { get; set; }
         public BaseClass BaseClass { get; set; }
+    }
+    public class LibraryDuesDTO
+    {
+        public string id { get; set; }
+        public string cstid { get; set; }
+        public string Reference { get; set; }
+        public string LibraryDue { get; set; }
+
+        public bool IsCleared { get; set; }
+        public BaseClass BaseClass { get; set; }
+
+
     }
 }

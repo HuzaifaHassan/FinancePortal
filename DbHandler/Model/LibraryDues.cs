@@ -16,6 +16,7 @@ namespace DbHandler.Model
         public string cstid { get; set; }
         public string Reference { get; set; }
         public string LibraryDue { get; set; }
+
         public bool IsCleared { get; set; }
     }
 }
