@@ -475,8 +475,8 @@ namespace FinancePortal.Controllers
                     };
                     var client = new HttpClient();
                     client.BaseAddress = new Uri("https://localhost:7120/");
-                    var requestUri = "api/Auth/Register";
-                    var requestBody = new StringContent(JsonConvert.SerializeObject(addStudent), Encoding.UTF8, "application/json");
+                    var requestUri = "api/Auth/GetStudentDetails";
+                    var requestBody = new StringContent(JsonConvert.SerializeObject(Grad), Encoding.UTF8, "application/json");
                     var response = await client.PostAsync(requestUri, requestBody);
 
                     // Check response status
